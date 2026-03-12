@@ -1,0 +1,30 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<div class="card">
+    <h1>Select a Date to View Available Slots</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="date" name="date" required>
+        <button type="submit">Show Slots</button>
+    </form>
+</div>
+
+
+{% if slots %}
+<div class="card">
+    <h2>Available Slots</h2>
+
+    {% for slot in slots %}
+        <p>
+            Lawyer: {{ slot.lawyer.user.username }}<br>
+            Category: {{ slot.lawyer.category.name }}<br>
+            Time: {{ slot.start|date:"d/m/Y" }} {{ slot.start|time:"H:i" }}
+             → {{ slot.end|date:"d/m/Y" }} {{ slot.end|time:"H:i" }}<br>
+            <a href="/book/{{ slot.id }}/"><button>Book This Slot</button></a>
+        </p>
+        <hr>
+    {% endfor %}
+</div>
+{% endif %}

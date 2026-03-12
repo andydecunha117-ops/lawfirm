@@ -1,0 +1,50 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<div class="card">
+    <h1>Make a Booking</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Select lawyer -->
+        <label for="lawyer">Select Lawyer:</label>
+        <select name="lawyer" required>
+            <option value="">-- Choose a Lawyer --</option>
+            {% for lawyer in lawyers %}
+                <option value="{{ lawyer.id }}"
+                    {% if lawyer.id|stringformat:"s" == selected_lawyer %}selected{% endif %}
+                >
+                    {{ lawyer.user.username }} ({{ lawyer.category.name }})
+                </option>
+            {% endfor %}
+        </select>
+
+       
+        <label for="month">Select Month:</label>
+        <input type="month" name="month" value="{{ selected_month }}" required>
+
+        <br><br>
+        <button type="submit">Show Available Slots</button>
+    </form>
+</div>
+
+{% if slots %}
+<div class="card">
+    <h2>Available Slots for Selected Month</h2>
+
+    {% for slot in slots %}
+        <div class="slot-box">
+            <p><strong>Date:</strong> {{ slot.start|date:"d/m/Y" }}</p>
+            <p><strong>Time:</strong> {{ slot.start|time:"H:i" }} - {{ slot.end|time:"H:i" }}</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="slot" value="{{ slot.id }}">
+                <button type="submit">Book This Slot</button>
+            </form>
+        </div>
+        <hr>
+    {% endfor %}
+</div>
+{% endif %}

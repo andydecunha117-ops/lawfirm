@@ -1,0 +1,31 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<h1>Our Lawyers</h1>
+<form method="GET" style="margin-bottom: 20px;">
+    <label><strong>Filter by Category:</strong></label>
+    <select name="category" onchange="this.form.submit()">
+        <option value="all">All Categories</option>
+
+        {% for c in categories %}
+            <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>
+                {{ c }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+
+{% for item in data %}
+<div class="card">
+    <h2>{{ item.lawyer.user.username }}</h2>
+    <p><strong>Category:</strong> {{ item.lawyer.category.name }}</p>
+    <p><strong>Consultation Fee:</strong> ${{ item.lawyer.fee }}</p>
+
+    {% if item.first_slot %}
+        <p><a href="/book/{{ item.first_slot.id }}/"><button>Book Appointment</button></a></p>
+    {% else %}
+        <p>No available slots</p>
+    {% endif %}
+</div>
+{% endfor %}

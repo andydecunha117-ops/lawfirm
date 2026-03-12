@@ -1,0 +1,90 @@
+{% load static %}
+{% load math_filters %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<div class="card">
+    <h1>Reports</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Start Date:</label><br>
+        <input type="date" name="start" required><br>
+
+        <label>End Date:</label><br>
+        <input type="date" name="end" required><br><br>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</div>
+
+{% if result %}
+
+<!-- 1. Consultations Completed -->
+<div class="card">
+    <h2>1. Consultations Completed</h2>
+    <p>{{ result.consultations }}</p>
+</div>
+
+<!-- 2A. Revenue Per Lawyer -->
+<div class="card">
+    <h2>2A. Revenue Per Lawyer</h2>
+
+    {% for row in result.revenue %}
+        <p>{{ row.lawyer__user__username }} — ${{ row.total_revenue }}</p>
+    {% empty %}
+        <p>No revenue found in this date range.</p>
+    {% endfor %}
+</div>
+
+<!-- 2B. Hours Per Lawyer -->
+<div class="card">
+    <h2>2B. Consultation Hours Per Lawyer</h2>
+
+    <table>
+        <tr>
+            <th>Lawyer</th>
+            <th>Total Hours</th>
+        </tr>
+
+        {% for item in result.hours %}
+        <tr>
+            <td>{{ item.lawyer__user__username }}</td>
+            <td>
+                {% if item.total_hours %}
+                    {% with total=item.total_hours %}
+                        {{ total.total_seconds|div:3600|floatformat:"2" }} hours
+                    {% endwith %}
+                {% else %}
+                    0 hours
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+            <tr><td colspan="2">No consultation hours.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- 3. Category Distribution -->
+<div class="card">
+    <h2>3. Appointment Distribution (By Category)</h2>
+
+    {% for row in result.distribution %}
+        <p>{{ row.lawyer__category__name }} — {{ row.total }} appointments</p>
+    {% empty %}
+        <p>No data for this period.</p>
+    {% endfor %}
+</div>
+
+<!-- 3B. Lawyer Distribution -->
+<div class="card">
+    <h2>3B. Appointment Distribution (By Lawyer)</h2>
+
+    {% for row in result.distribution_lawyer %}
+        <p>{{ row.lawyer__user__username }} — {{ row.total }} appointments</p>
+    {% empty %}
+        <p>No data found.</p>
+    {% endfor %}
+</div>
+
+{% endif %}

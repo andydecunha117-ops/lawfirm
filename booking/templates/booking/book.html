@@ -1,0 +1,19 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<div class="card">
+    <h1>Booking a Consultation</h1>
+
+    <div class="slot-info">
+        <p>Lawyer: <strong>{{ slot.lawyer.user.username }}</strong></p>
+        <p>Category: {{ slot.lawyer.category.name }}</p>
+        <p>Fee: ${{ slot.lawyer.fee }}</p>
+        <p>Date: {{ slot.start|date:"d/m/Y" }}</p>
+        <p>Time: {{ slot.start|time:"H:i" }} → {{ slot.end|time:"H:i" }}</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Confirm Booking</button>
+    </form>
+</div>

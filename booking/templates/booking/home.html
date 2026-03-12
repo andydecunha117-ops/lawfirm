@@ -1,0 +1,19 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'booking/style.css' %}">
+
+<div class="card">
+    <h1>Welcome to the Law Firm Booking System</h1>
+
+    <p><a href="/lawyers/">View All Lawyers</a></p>
+    <p><a href="/make_booking/">Make a Booking (Form)</a></p>
+    <p><a href="/my_appointments/">My Appointments (Lawyers Only)</a></p>
+    <p><a href="/reports/">View Reports</a></p>
+
+
+    {% if user.is_authenticated %}
+        <p>Logged in as: <strong>{{ user.username }}</strong></p>
+        <a href="/accounts/logout/">Logout</a>
+    {% else %}
+        <a href="/accounts/login/">Login</a>
+    {% endif %}
+</div>
